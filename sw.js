@@ -1,7 +1,7 @@
 /* Service worker aplikasi Absensi KPU Cianjur.
  * Hanya menyimpan "kulit" aplikasi (halaman pembuka & ikon). Data absensi
  * TIDAK pernah disimpan di HP/PC; semuanya tetap langsung ke Apps Script. */
-const VERSI = 'absensi-kpu-v2';
+const VERSI = 'absensi-kpu-v3';
 const FILE_KULIT = [
   './', './index.html', './config.js', './manifest.webmanifest',
   './ikon/ikon-192.png', './ikon/ikon-512.png', './ikon/apple-touch-icon.png', './ikon/favicon-32.png'
