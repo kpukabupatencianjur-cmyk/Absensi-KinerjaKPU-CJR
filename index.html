@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Absensi KPU Cianjur</title>
   <meta name="description" content="Aplikasi Absensi Pegawai Sekretariat KPU Kabupaten Cianjur">
-  <meta name="theme-color" content="#6d0f24">
+  <meta name="theme-color" content="#96120a">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="ikon/favicon-32.png">
   <link rel="apple-touch-icon" href="ikon/apple-touch-icon.png">
@@ -15,12 +15,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     *{box-sizing:border-box;}
-    html,body{margin:0;height:100%;background:#6d0f24;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;}
+    html,body{margin:0;height:100%;background:#96120a;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;}
     #bingkai{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;
       padding-top:env(safe-area-inset-top);display:none;}
     .layar{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
       color:#fff8e6;text-align:center;padding:24px;gap:14px;}
-    .layar img{width:96px;height:96px;border-radius:22px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+    .layar img{width:120px;height:120px;border-radius:50%;box-shadow:0 8px 24px rgba(0,0,0,.35);}
     .layar h1{margin:0;font-size:20px;letter-spacing:.3px;}
     .layar p{margin:0;font-size:14px;opacity:.85;max-width:340px;line-height:1.5;}
     .putar{width:28px;height:28px;border:3px solid rgba(255,248,230,.3);border-top-color:#d4a73c;border-radius:50%;
@@ -36,7 +36,7 @@
   <!-- Layar pembuka -->
   <div class="layar" id="layarMuat">
     <img src="ikon/ikon-192.png" alt="">
-    <h1>Absensi Pegawai</h1>
+    <h1>Absensi KPU Cianjur</h1>
     <p>Sekretariat KPU Kabupaten Cianjur</p>
     <div class="putar" id="putar"></div>
     <p id="pesanMuat">Memuat sistem absensi...</p>
