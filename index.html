@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Absensi KPU Cianjur</title>
+  <meta name="description" content="Aplikasi Absensi Pegawai Sekretariat KPU Kabupaten Cianjur">
+  <meta name="theme-color" content="#6d0f24">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="ikon/favicon-32.png">
+  <link rel="apple-touch-icon" href="ikon/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Absensi KPU">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    *{box-sizing:border-box;}
+    html,body{margin:0;height:100%;background:#6d0f24;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;}
+    #bingkai{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;
+      padding-top:env(safe-area-inset-top);display:none;}
+    .layar{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      color:#fff8e6;text-align:center;padding:24px;gap:14px;}
+    .layar img{width:96px;height:96px;border-radius:22px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+    .layar h1{margin:0;font-size:20px;letter-spacing:.3px;}
+    .layar p{margin:0;font-size:14px;opacity:.85;max-width:340px;line-height:1.5;}
+    .putar{width:28px;height:28px;border:3px solid rgba(255,248,230,.3);border-top-color:#d4a73c;border-radius:50%;
+      animation:putar 0.9s linear infinite;}
+    @keyframes putar{to{transform:rotate(360deg);}}
+    .tombol{display:inline-block;margin-top:6px;padding:11px 20px;border-radius:10px;border:0;cursor:pointer;
+      background:#d4a73c;color:#3b0712;font-weight:700;font-size:14px;text-decoration:none;}
+    .tombol.garis{background:transparent;color:#fff8e6;border:1.5px solid rgba(255,248,230,.6);}
+    .hidden{display:none !important;}
+  </style>
+</head>
+<body>
+  <!-- Layar pembuka -->
+  <div class="layar" id="layarMuat">
+    <img src="ikon/ikon-192.png" alt="">
+    <h1>Absensi Pegawai</h1>
+    <p>Sekretariat KPU Kabupaten Cianjur</p>
+    <div class="putar" id="putar"></div>
+    <p id="pesanMuat">Memuat sistem absensi...</p>
+    <div id="aksiCadangan" class="hidden">
+      <button class="tombol" id="btnMuatUlang">Muat Ulang</button>
+      <a class="tombol garis" id="btnBukaLangsung" href="#">Buka Langsung</a>
+    </div>
+  </div>
+
+  <!-- Layar tanpa internet -->
+  <div class="layar hidden" id="layarOffline">
+    <img src="ikon/ikon-192.png" alt="">
+    <h1>Tidak Ada Koneksi Internet</h1>
+    <p>Absensi membutuhkan internet. Periksa data seluler atau Wi-Fi Anda, lalu coba lagi.</p>
+    <button class="tombol" onclick="location.reload()">Coba Lagi</button>
+  </div>
+
+  <!-- Layar pengaturan belum diisi -->
+  <div class="layar hidden" id="layarBelumDiatur">
+    <h1>Aplikasi belum diatur</h1>
+    <p>Admin perlu mengisi URL Web App Apps Script di file <b>config.js</b>.</p>
+  </div>
+
+  <iframe id="bingkai" title="Absensi Pegawai" allow="geolocation; camera; clipboard-write"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+  <script src="config.js"></script>
+  <script>
+  (function(){
+    var K = window.KONFIG_ABSENSI || {};
+    var URL_APP = String(K.URL_APPS_SCRIPT || '').trim();
+    var $ = function(id){ return document.getElementById(id); };
+
+    // Daftarkan service worker (agar bisa dipasang sebagai aplikasi).
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+    }
+
+    if (!/^https:\/\/script\.google\.com\/.+\/exec/.test(URL_APP) || URL_APP.indexOf('GANTI_DENGAN') !== -1) {
+      $('layarMuat').classList.add('hidden');
+      $('layarBelumDiatur').classList.remove('hidden');
+      return;
+    }
+    $('btnBukaLangsung').href = URL_APP;
+
+    if (!navigator.onLine) {
+      $('layarMuat').classList.add('hidden');
+      $('layarOffline').classList.remove('hidden');
+      window.addEventListener('online', function(){ location.reload(); });
+      return;
+    }
+
+    if (K.MODE === 'langsung') {
+      location.replace(URL_APP);
+      return;
+    }
+
+    var bingkai = $('bingkai');
+    var selesai = false;
+    bingkai.addEventListener('load', function(){
+      selesai = true;
+      bingkai.style.display = 'block';
+      $('layarMuat').classList.add('hidden');
+    });
+    bingkai.src = URL_APP;
+
+    // Jika lama tidak terbuka (sinyal lemah / diblokir), tampilkan pilihan cadangan.
+    setTimeout(function(){
+      if (selesai) return;
+      $('putar').classList.add('hidden');
+      $('pesanMuat').textContent = 'Sistem lama terbuka. Coba muat ulang, atau buka langsung di browser.';
+      $('aksiCadangan').classList.remove('hidden');
+    }, 20000);
+    $('btnMuatUlang').addEventListener('click', function(){ location.reload(); });
+
+    window.addEventListener('offline', function(){
+      $('layarOffline').classList.remove('hidden');
+    });
+    window.addEventListener('online', function(){
+      $('layarOffline').classList.add('hidden');
+    });
+  })();
+  </script>
+</body>
+</html>
